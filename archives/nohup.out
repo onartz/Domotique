@@ -1,6 +1,0 @@
-Traceback (most recent call last):
-  File "logTemperature.py", line 19, in <module>
-    res = ser.read(100)
-  File "/usr/lib/python2.7/dist-packages/serial/serialposix.py", line 442, in read
-    ready,_,_ = select.select([self.fd],[],[], self._timeout)
-KeyboardInterrupt
