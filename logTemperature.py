@@ -4,7 +4,7 @@
 from ConfigParser import SafeConfigParser
 import serial
 import logging
-logging.basicConfig(filename='logTemperature.log',level=logging.DEBUG)
+logging.basicConfig(filename='SmartHome/logTemperature.log',level=logging.ERROR, format='%(asctime)s %(message)s')
 
 #Lecture de config.ini
 parser = SafeConfigParser()
@@ -37,10 +37,11 @@ while True:
     res = ser.read(100)
     temp = getTemperature(res)
     #print temp
+    #logging.debug(temp)
     if(temp != -1):
 	#conversion de la valeur lue en temperature
         temp = 40-0.1548627*temp-2
-	print(temp)
+	logging.debug(temp)
 	data = [
         	{"name":"TempSalon",
            	"columns":["value"],

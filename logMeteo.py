@@ -5,7 +5,9 @@ import json
 import sys
 
 import logging
-logging.basicConfig(filename='logMeteo.log',level=logging.DEBUG)
+logging.basicConfig(filename='SmartHome/logMeteo.log',level=logging.ERROR,format='%(asctime)s %(message)s' )
+
+logging.error("Start")
 
 from pprint import pprint
 from influxdb import client as influxdb
