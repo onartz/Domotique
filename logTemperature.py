@@ -4,16 +4,20 @@
 from ConfigParser import SafeConfigParser
 import serial
 import logging
-logging.basicConfig(filename='SmartHome/logTemperature.log',level=logging.ERROR, format='%(asctime)s %(message)s')
+configFile = '/home/pi/SmartHome/config.ini'
+logFile = '/home/pi/SmartHome/logTemperature.log'
+logging.basicConfig(filename=logFile,level=logging.DEBUG, format='%(asctime)s %(message)s')
 
 #Lecture de config.ini
 parser = SafeConfigParser()
-parser.read('config.ini')
+parser.read(configFile)
 url = parser.get('InfluxDB','url')
 port = parser.get('InfluxDB', 'port')
 username = parser.get('InfluxDB', 'username')
 password = parser.get('InfluxDB', 'password')
 database = parser.get('InfluxDB', 'database')
+
+logging.debug('Starting logTemperature.py')
 
 #Creation du client influxDB
 from influxdb import client as influxdb
@@ -37,17 +41,17 @@ while True:
     res = ser.read(100)
     temp = getTemperature(res)
     #print temp
-    #logging.debug(temp)
     if(temp != -1):
 	#conversion de la valeur lue en temperature
         temp = 40-0.1548627*temp-2
-	logging.debug(temp)
+	logging.info('Temperature : %s', temp)
 	data = [
         	{"name":"TempSalon",
            	"columns":["value"],
            	"points":[[round(temp,2)]]
             	}
             	]
+        logging.debug(data)
 	#Ecriture dans InfluxDB
         try:
            db.write_points(data)

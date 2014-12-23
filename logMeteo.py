@@ -3,18 +3,20 @@ from ConfigParser import SafeConfigParser
 import urllib2, requests
 import json
 import sys
-
 import logging
-logging.basicConfig(filename='SmartHome/logMeteo.log',level=logging.ERROR,format='%(asctime)s %(message)s' )
 
-logging.error("Start")
+configFile = '/home/pi/SmartHome/config.ini'
+logFile = '/home/pi/SmartHome/logMeteo.log'
+logging.basicConfig(filename=logFile,level=logging.DEBUG,format='%(asctime)s %(message)s' )
 
-from pprint import pprint
+logging.debug("Starting logMeteo.py")
+
+#from pprint import pprint
 from influxdb import client as influxdb
 
 #Lecture de config.ini
 parser = SafeConfigParser()
-parser.read('config.ini')
+parser.read(configFile)
 url = parser.get('InfluxDB','url')
 port = parser.get('InfluxDB', 'port')
 username = parser.get('InfluxDB', 'username')
@@ -23,10 +25,11 @@ database = parser.get('InfluxDB', 'database')
 
 #Client influxDB
 db = influxdb.InfluxDBClient(url, port , username, password, database)
-#client openWeatherMap
 
+#client openWeatherMap
 openWeatherMapUrl = parser.get('OpenWeatherMap', 'url') 
-#="http://api.openweathermap.org/data/2.5/weather?q=Bayon,fr&units=metric"
+logging.info(openWeatherMapUrl)
+
 try:
   r=requests.get(openWeatherMapUrl)
 except requests.exceptions.RequestException as err:
@@ -68,6 +71,8 @@ try:
     ]
   }
   ]
+  logging.info(data)
+
   db.write_points(data)
 except ValueError as err:
   logging.error(err)
